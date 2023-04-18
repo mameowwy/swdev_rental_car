@@ -53,7 +53,7 @@ exports.getBooking = async (req, res, next) => {
 //@desc     Add appointment
 //@route    POST /api/v1/rentalCarProviders/:rentalCarProviderId/appointment
 //@access   Private
-exports.addAppointment = async (req, res, next) => {
+exports.addBooking = async (req, res, next) => {
     try {
         req.body.rentalCarProvider = req.params.rentalCarProviderId;
         const rentalCarProvider = await RentalCarProvider.findById(req.params.rentalCarProviderId);
