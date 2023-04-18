@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const HospitalSchema = new mongoose.Schema(
+const RentalCarProviderSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -26,31 +26,44 @@ const HospitalSchema = new mongoose.Schema(
             required: [true, 'Please add a postalcode'],
             maxlength: [5, 'Postalcode cannot be more than 5 digits'],
         },
-        tel: {
+        telephoneNumber: {
             type: String,
+            required: [true, 'Please add a telephone number'],
         },
-        region: {
+        brand: {
             type: String,
-            required: [true, 'Please add a region'],
+            required: [true, 'Please add a brand of car'],
         },
+        model: {
+            type: String,
+            required: [true, 'Please add a model of car'],
+        },
+        color: {
+            type: String,
+            required: [true, 'Please add a color of car'],
+        },
+        numberOfSeat: {
+            type: Number,
+            required: [true, 'Please add a number of seat'],
+        }
     }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
 });
 
-// Cascade delete appointments when a hospital is deleted
-HospitalSchema.pre('remove', async function (next) {
-    console.log(`Appointments being removed from hospital ${this._id}`);
-    await this.model('Appointment').deleteMany({ hospital: this._id });
+// Cascade delete bookings when a rental car provider is deleted
+RentalCarProviderSchema.pre('remove', async function (next) {
+    console.log(`Bookings being removed from rental car provider ${this._id}`);
+    await this.model('Booking').deleteMany({ rentalCarProvider: this._id });
     next();
 });
 
 // Reverse populate with virtuals
-HospitalSchema.virtual('appointments', {
-    ref: 'Appointment',
+RentalCarProviderSchema.virtual('bookings', {
+    ref: 'Booking',
     localField: '_id',
-    foreignField: 'hospital',
+    foreignField: 'rentalCarProvider',
     justOne: false,
 });
 
-module.exports = mongoose.model('Hospital', HospitalSchema);
+module.exports = mongoose.model('RentalCarProvider', RentalCarProviderSchema);

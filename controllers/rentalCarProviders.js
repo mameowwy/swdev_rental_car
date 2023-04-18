@@ -1,10 +1,9 @@
-const Hospital = require('../models/Hospital');
-// const vacCenter = require('../models/VacCenter');
+const RentalCarProvider = require('../models/RentalCarProvider');
 
-//@desc     Get all hospitals
-//@route    GET / api/v1/hospitals
+//@desc     Get all rentalCarProviders
+//@route    GET / api/v1/rentalCarProviders
 //@access   Public
-exports.getHospitals = async (req, res, next) => {
+exports.getRentalCarProviders = async (req, res, next) => {
     try {
         let query;
 
@@ -25,7 +24,7 @@ exports.getHospitals = async (req, res, next) => {
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
         //Finding resource
-        query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
+        query = RentalCarProvider.find(JSON.parse(queryStr)).populate('bookings');
 
         //Select Fields
         if (req.query.select) {
@@ -46,12 +45,12 @@ exports.getHospitals = async (req, res, next) => {
         const limit = parseInt(req.query.limit, 10) || 25;
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const total = await Hospital.countDocuments();
+        const total = await RentalCarProvider.countDocuments();
 
         query = query.skip(startIndex).limit(limit);
 
         //Executing query
-        const hospitals = await query;
+        const rentalCarProviders = await query;
 
         // Pagination result
         const pagination = {};
@@ -62,85 +61,71 @@ exports.getHospitals = async (req, res, next) => {
             pagination.prev = { page: page - 1, limit };
         }
 
-        res.status(200).json({ success: true, count: hospitals.length, data: hospitals });
+        res.status(200).json({ success: true, count: rentalCarProviders.length, data: rentalCarProviders });
     } catch (err) {
         res.status(400).json({ success: false });
     }
 };
 
-//@desc     Get single hospitals
-//@route    GET / api/v1/hospitals/:id
+//@desc     Get single rentalCarProviders
+//@route    GET / api/v1/rentalCarProviders/:id
 //@access   Public
-exports.getHospital = async (req, res, next) => {
+exports.getRentalCarProvider = async (req, res, next) => {
     try {
-        const hospital = await Hospital.findById(req.params.id);
+        const rentalCarProvider = await RentalCarProvider.findById(req.params.id);
 
-        if (!hospital) {
+        if (!rentalCarProvider) {
             return res.status(400).json({ success: false });
         }
 
-        res.status(200).json({ success: true, data: hospital });
+        res.status(200).json({ success: true, data: rentalCarProvider });
     } catch (err) {
         res.status(400).json({ success: false });
     }
 };
 
-//@desc     Create new hospital
-//@route    POST / api/v1/hospitals
+//@desc     Create new rentalCarProvider
+//@route    POST / api/v1/rentalCarProviders
 //@access   Private
-exports.createHospital = async (req, res, next) => {
-    const hospital = await Hospital.create(req.body);
-    res.status(201).json({ success: true, data: hospital });
+exports.createRentalCarProvider = async (req, res, next) => {
+    const rentalCarProvider = await RentalCarProvider.create(req.body);
+    res.status(201).json({ success: true, data: rentalCarProvider });
 };
 
-//@desc     Update hospitals
-//@route    PUT / api/v1/hospitals/:id
+//@desc     Update rentalCarProviders
+//@route    PUT / api/v1/rentalCarProviders/:id
 //@access   Private
-exports.updateHospital = async (req, res, next) => {
+exports.updateRentalCarProvider = async (req, res, next) => {
     try {
-        const hospital = await Hospital.findByIdAndUpdate(req.params.id, req.body, {
+        const rentalCarProvider = await RentalCarProvider.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
 
-        if (!hospital) {
+        if (!rentalCarProvider) {
             return res.status(400).json({ success: false });
         }
 
-        res.status(200).json({ success: true, data: hospital });
+        res.status(200).json({ success: true, data: rentalCarProvider });
     } catch (err) {
         res.status(400).json({ success: false });
     }
 };
 
-//@desc     Delete hospitals
-//@route    DELETE / api/v1/hospitals/:id
+//@desc     Delete rentalCarProviders
+//@route    DELETE / api/v1/rentalCarProviders/:id
 //@access   Private
-exports.deleteHospital = async (req, res, next) => {
+exports.deleteRentalCarProvider = async (req, res, next) => {
     try {
-        const hospital = await Hospital.findById(req.params.id);
+        const rentalCarProvider = await RentalCarProvider.findById(req.params.id);
 
-        if (!hospital) {
+        if (!rentalCarProvider) {
             return res.status(400).json({ success: false });
         }
 
-        hospital.remove();
+        rentalCarProvider.remove();
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
         res.status(400).json({ success: false });
     }
-};
-
-//@desc     Get vaccine centers
-//@route    GET / api/v1/hospitals/vacCenters/
-//@access   Public
-exports.getVacCenters = (req, res, next) => {
-    vacCenter.getAll((err, data) => {
-        if (err)
-            res.status(500).send({
-                message:
-                    err.message || 'Some error occured while retrieving Vaccine Centers.'
-            });
-        else res.send(data);
-    });
 };
