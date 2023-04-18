@@ -12,8 +12,8 @@ dotenv.config({ path: './config/config.env' });
 connectDB();
 
 //Route files
-const hospitals = require('./routes/hospitals');
-const appointments = require('./routes/appointments');
+const rentalCarProviders = require('./routes/rentalCarProviders');
+const bookings = require('./routes/bookings');
 const auth = require('./routes/auth');
 
 const app = express();
@@ -74,8 +74,8 @@ app.use(hpp());
 app.use(cors());
 
 //Mount routers
-app.use('/api/v1/hospitals', hospitals);
-app.use('/api/v1/appointments', appointments);
+app.use('/api/v1/rentalCarProviders', rentalCarProviders);
+app.use('/api/v1/bookings', bookings);
 app.use('/api/v1/auth', auth);
 
 const PORT = process.env.PORT || 10000;
