@@ -6,11 +6,12 @@ const { use } = require('../routes/auth');
 //@access   Public
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, telephoneNumber, email, password, role } = req.body;
 
         //Create user
         const user = await User.create({
             name,
+            telephoneNumber,
             email,
             password,
             role
