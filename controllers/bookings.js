@@ -37,8 +37,8 @@ exports.getBookings = async (req, res, next) => {
 exports.getBooking = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id).populate({
-            path: 'hospital',
-            select: 'name description tel',
+            path: 'rentalCarProvider',
+            select: 'name address tel',
         });
         if (!booking) {
             return res.status(404).json({ success: false, message: `No booking with the id of ${req.params.id}` });
@@ -50,8 +50,8 @@ exports.getBooking = async (req, res, next) => {
     }
 };
 
-//@desc     Add appointment
-//@route    POST /api/v1/rentalCarProviders/:rentalCarProviderId/appointment
+//@desc     Add booking
+//@route    POST /api/v1/rentalCarProviders/:rentalCarProviderId/booking
 //@access   Private
 exports.addBooking = async (req, res, next) => {
     try {
