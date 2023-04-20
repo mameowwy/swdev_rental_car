@@ -29,22 +29,6 @@ const RentalCarProviderSchema = new mongoose.Schema(
         telephoneNumber: {
             type: String,
             required: [true, 'Please add a telephone number'],
-        },
-        brand: {
-            type: String,
-            required: [true, 'Please add a brand of car'],
-        },
-        model: {
-            type: String,
-            required: [true, 'Please add a model of car'],
-        },
-        color: {
-            type: String,
-            required: [true, 'Please add a color of car'],
-        },
-        numberOfSeat: {
-            type: Number,
-            required: [true, 'Please add a number of seat'],
         }
     }, {
     toJSON: { virtuals: true },
@@ -63,6 +47,21 @@ RentalCarProviderSchema.virtual('bookings', {
     ref: 'Booking',
     localField: '_id',
     foreignField: 'rentalCarProvider',
+    justOne: false,
+});
+
+// Cascade delete cars when a rental car provider is deleted
+RentalCarProviderSchema.pre('remove', async function (next) {
+    console.log(`Cars being removed from rental car provider ${this._id}`);
+    await this.model('Car').deleteMany({ car: this._id });
+    next();
+});
+
+// Reverse populate with virtuals
+RentalCarProviderSchema.virtual('cars', {
+    ref: 'Car',
+    localField: '_id',
+    foreignField: 'car',
     justOne: false,
 });
 

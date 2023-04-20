@@ -13,6 +13,7 @@ connectDB();
 
 //Route files
 const rentalCarProviders = require('./routes/rentalCarProviders');
+const cars = require('./routes/cars');
 const bookings = require('./routes/bookings');
 const auth = require('./routes/auth');
 
@@ -75,6 +76,7 @@ app.use(cors());
 
 //Mount routers
 app.use('/api/v1/rentalCarProviders', rentalCarProviders);
+app.use('/api/v1/cars', cars);
 app.use('/api/v1/bookings', bookings);
 app.use('/api/v1/auth', auth);
 
