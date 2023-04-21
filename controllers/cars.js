@@ -1,5 +1,5 @@
 const Car = require('../models/Car');
-
+const RentalCarProvider = require('../models/RentalCarProvider');
 //@desc     Get all cars
 //@route    GET / api/v1/cars
 //@access   Public
@@ -89,6 +89,12 @@ exports.getCar = async (req, res, next) => {
 //@route    POST / api/v1/cars
 //@access   Private
 exports.createCar = async (req, res, next) => {
+    //check if rental car provider is exists
+    const rentalCarProvider = await RentalCarProvider.findById(req.body.rentalCarProvider);
+    if (!rentalCarProvider) {
+        return res.status(404).json({ success: false, message: `No RentalCarProvider with the id of ${req.body.rentalCarProvider}` });
+    }
+
     const car = await Car.create(req.body);
     res.status(201).json({ success: true, data: car });
 };

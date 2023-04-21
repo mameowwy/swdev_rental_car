@@ -85,7 +85,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 }
 
 //@desc     Get current Logged in user
-//@route    POST /api/v1/auth/me
+//@route    GET /api/v1/auth/me
 //@access   Private
 exports.getMe = async (req, res, next) => {
     const user = await User.findById(req.user.id);

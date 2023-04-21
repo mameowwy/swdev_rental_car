@@ -61,7 +61,7 @@ RentalCarProviderSchema.pre('remove', async function (next) {
 RentalCarProviderSchema.virtual('cars', {
     ref: 'Car',
     localField: '_id',
-    foreignField: 'car',
+    foreignField: 'rentalCarProvider',
     justOne: false,
 });
 

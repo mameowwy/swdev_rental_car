@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
+const Car = require('../models/Car');
 const RentalCarProvider = require('../models/RentalCarProvider');
 
 //@desc     Get all bookings
@@ -10,12 +12,18 @@ exports.getBookings = async (req, res, next) => {
     if (req.user.role !== "admin") {
         query = Booking.find({ user: req.user.id }).populate({
             path: 'rentalCarProvider',
-            select: 'name address tel',
+            select: 'name address telephoneNumber',
+        }).populate({
+            path: 'car',
+            select: 'brand model color numberOfSeats',
         });
     } else {
         query = Booking.find().populate({
             path: 'rentalCarProvider',
-            select: 'name address tel',
+            select: 'name address telephoneNumber',
+        }).populate({
+            path: 'car',
+            select: 'brand model color numberOfSeats',
         });
     }
     try {
@@ -50,6 +58,23 @@ exports.getBooking = async (req, res, next) => {
     }
 };
 
+//@desc     Get rental car provider's booking
+//@route    GET /api/v1/booking/rentalCarProvider/:rentalCarProviderID
+//@access   Public
+exports.getRentalCarProviderBooking = async (req, res, next) => {
+    try {
+        const bookings = await Booking.find({rentalCarProvider: mongoose.Types.ObjectId(req.params.id)})
+        if (!bookings) {
+            return res.status(404).json({ success: false, message: `No booking with the id of ${req.params.id}` });
+        }
+        res.status(200).json({ success: true, count: bookings.length , data: bookings });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: 'Cannot find booking' });
+    }
+};
+
+
 //@desc     Add booking
 //@route    POST /api/v1/rentalCarProviders/:rentalCarProviderId/booking
 //@access   Private
@@ -59,6 +84,17 @@ exports.addBooking = async (req, res, next) => {
         const rentalCarProvider = await RentalCarProvider.findById(req.params.rentalCarProviderId);
         if (!rentalCarProvider) {
             return res.status(404).json({ success: false, message: `No rentalCarProvider with the id of ${req.params.rentalCarProviderId}` });
+        }
+
+        //Check if car is exist
+        const car = await Car.findById(req.body.car);
+        if(!car){
+            return res.status(404).json({ success: false, message: `No car with the id of ${req.params.rentalCarProviderId}` });
+        }
+        //Check if car is belong to provider
+        console.log("Provider id ", car.rentalCarProvider.toString());
+        if(car.rentalCarProvider.toString() !== req.params.rentalCarProviderId) {
+            return res.status(404).json({success: false, messsage: `This car is not belong to ${req.params.rentalCarProviderId}`})
         }
 
         //add user Id to req.body

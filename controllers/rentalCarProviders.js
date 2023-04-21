@@ -24,7 +24,9 @@ exports.getRentalCarProviders = async (req, res, next) => {
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
         //Finding resource
-        query = RentalCarProvider.find(JSON.parse(queryStr)).populate('bookings');
+        query = RentalCarProvider.find(JSON.parse(queryStr)).populate({
+            path: 'cars',
+            select: 'brand color'})//.populate('cars');
 
         //Select Fields
         if (req.query.select) {
@@ -72,7 +74,9 @@ exports.getRentalCarProviders = async (req, res, next) => {
 //@access   Public
 exports.getRentalCarProvider = async (req, res, next) => {
     try {
-        const rentalCarProvider = await RentalCarProvider.findById(req.params.id);
+        const rentalCarProvider = await RentalCarProvider.findById(req.params.id).populate({
+            path: 'cars',
+            select: 'brand color'});
 
         if (!rentalCarProvider) {
             return res.status(400).json({ success: false });
