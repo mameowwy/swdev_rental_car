@@ -127,7 +127,7 @@ exports.deleteCar = async (req, res, next) => {
         const car = await Car.findById(req.params.id);
 
         if (!car) {
-            return res.status(400).json({ success: false });
+            return res.status(400).json({ success: false, msg: `Car not found with id of ${req.params.id}` });
         }
 
         car.remove();

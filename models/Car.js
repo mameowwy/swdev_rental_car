@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Booking = require('../models/Booking');
 
 const CarSchema = new mongoose.Schema(
     {
@@ -25,9 +26,10 @@ const CarSchema = new mongoose.Schema(
     });
 
 // Cascade delete bookings when a car is deleted
-CarSchema.pre('remove', async function (next) {
+CarSchema.pre("remove", async function (next) {
     console.log(`Bookings being removed from car ${this._id}`);
-    await this.model('Booking').deleteMany({ car: this._id });
+    await Booking.deleteMany({ car: this._id });
+    //await this.model('Booking').deleteMany({ car: this._id });
     next();
 });
 
